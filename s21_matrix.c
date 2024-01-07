@@ -35,3 +35,31 @@ void s21_remove_matrix(matrix_t *A) {
   A->columns = 0;
   A->matrix = NULL;
 }
+
+int sum_and_sub(matrix_t *A, matrix_t *B, matrix_t *result, int is_sum) {
+  int error = 0;
+  if (A->columns != B->columns || A->rows != B->rows ||
+      A->columns != result->columns || A->rows != result->rows) {
+    error = 2;
+  } else if (result->columns < 1 || result->rows < 1) {
+    error = 1;
+  } else {
+    for (int i = 0; i < A->rows; i++) {
+      for (int j = 0; j < A->columns; j++) {
+        if (is_sum)
+          result->matrix[i][j] = A->matrix[i][j] + B->matrix[i][j];
+        else
+          result->matrix[i][j] = A->matrix[i][j] - B->matrix[i][j];
+      }
+    }
+  }
+  return error;
+}
+
+int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
+  return sum_and_sub(A, B, result, 1);
+}
+
+int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
+  return sum_and_sub(A, B, result, 0);
+}
