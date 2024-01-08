@@ -10,30 +10,20 @@ double get_rand(double min, double max) {
 }
 
 int main(void) {
-  matrix_t A, B, res;
-  s21_create_matrix(3, 2, &A);
-  s21_create_matrix(2, 3, &B);
-  A.matrix[0][0] = 2.0;
-  A.matrix[0][1] = 2.0;
-  A.matrix[1][0] = 2.0;
-  A.matrix[1][1] = 2.0;
-  A.matrix[2][0] = 2.0;
-  A.matrix[2][1] = 2.0;
-  B.matrix[0][0] = 2.0;
-  B.matrix[1][0] = 2.0;
-  B.matrix[0][1] = 2.0;
-  B.matrix[1][1] = 2.0;
-  B.matrix[0][2] = 2.0;
-  B.matrix[1][2] = 2.0;
-  int er = s21_mult_matrix(&A, &B, &res);
+  matrix_t A;
+  s21_create_matrix(2, 2, &A);
+  A.matrix[0][0] = -5.0;
+  A.matrix[0][1] = -4.0;
+  A.matrix[1][0] = -2.0;
+  A.matrix[1][1] = -3.0;
+  double b;
+  int er = s21_determinant(&A, &b);
   if (!er)
-    print_matrix(res);
+    printf("%f\n", b);
   else
-    printf("%d\n", er);
+    printf("Error: %d\n", er);
 
   s21_remove_matrix(&A);
-  s21_remove_matrix(&B);
-  s21_remove_matrix(&res);
   return 0;
 }
 
