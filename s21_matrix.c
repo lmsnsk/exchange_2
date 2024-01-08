@@ -63,3 +63,34 @@ int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
 int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
   return sum_and_sub(A, B, result, 0);
 }
+
+int incorrect_matrix(matrix_t *A) {
+  int res = 0;
+  if (A->columns < 1 || A->rows < 1 || A == NULL || A->matrix == NULL) res = 1;
+  return res;
+}
+
+// @brief функция сравнение матриц
+// @param A первая матрица для сравнения
+// @param B вторая матрица для сравнения
+// @return результат сравнения (0 - не равны, 1 - равны)
+int s21_eq_matrix(matrix_t *A, matrix_t *B) {
+  double check;
+  int compare = SUCCESS;
+  if (A->columns == B->columns && A->rows == B->rows && !incorrect_matrix(A) &&
+      !incorrect_matrix(B)) {
+    for (int i = 0; i < A->rows; i++) {
+      for (int j = 0; j < A->columns; j++) {
+        check = A->matrix[i][j] - B->matrix[i][j];
+        if (fabs(check) > ACCURACY) {
+          compare = FAILURE;
+          break;
+        }
+      }
+      if (check) break;
+    }
+  } else {
+    compare = FAILURE;
+  }
+  return compare;
+}
