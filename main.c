@@ -10,27 +10,30 @@ double get_rand(double min, double max) {
 }
 
 int main(void) {
-  const int rows = rand() % 100 + 1;
-  const int cols = rand() % 100 + 1;
-  matrix_t m = {0};
-  s21_create_matrix(rows, cols, &m);
-  matrix_t mtx = {0};
-  s21_create_matrix(rows, cols, &mtx);
-  for (int i = 0; i < rows; i++) {
-    for (int j = 0; j < cols; j++) {
-      double rand_val = get_rand(DBL_MIN, DBL_MAX);
-      m.matrix[i][j] = rand_val;
-      mtx.matrix[i][j] = rand_val;
-    }
-  }
-  int res = s21_eq_matrix(&m, &mtx);
-  printf("%d %d\n", m.rows, m.columns);
-  printf("%d %d\n", mtx.rows, mtx.columns);
-  printf("%e %e\n", m.matrix[0][0], mtx.matrix[0][0]);
-  printf("%d\n", res);
-  s21_remove_matrix(&m);
-  s21_remove_matrix(&mtx);
+  matrix_t A, B, res;
+  s21_create_matrix(3, 2, &A);
+  s21_create_matrix(2, 3, &B);
+  A.matrix[0][0] = 2.0;
+  A.matrix[0][1] = 2.0;
+  A.matrix[1][0] = 2.0;
+  A.matrix[1][1] = 2.0;
+  A.matrix[2][0] = 2.0;
+  A.matrix[2][1] = 2.0;
+  B.matrix[0][0] = 2.0;
+  B.matrix[1][0] = 2.0;
+  B.matrix[0][1] = 2.0;
+  B.matrix[1][1] = 2.0;
+  B.matrix[0][2] = 2.0;
+  B.matrix[1][2] = 2.0;
+  int er = s21_mult_matrix(&A, &B, &res);
+  if (!er)
+    print_matrix(res);
+  else
+    printf("%d\n", er);
 
+  s21_remove_matrix(&A);
+  s21_remove_matrix(&B);
+  s21_remove_matrix(&res);
   return 0;
 }
 

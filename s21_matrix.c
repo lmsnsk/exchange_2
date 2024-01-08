@@ -38,18 +38,18 @@ void s21_remove_matrix(matrix_t *A) {
 
 int sum_and_sub(matrix_t *A, matrix_t *B, matrix_t *result, int is_sum) {
   int error = 0;
-  if (A->columns != B->columns || A->rows != B->rows ||
-      A->columns != result->columns || A->rows != result->rows) {
+  if (A->columns != B->columns || A->rows != B->rows) {
     error = 2;
-  } else if (result->columns < 1 || result->rows < 1) {
-    error = 1;
   } else {
-    for (int i = 0; i < A->rows; i++) {
-      for (int j = 0; j < A->columns; j++) {
-        if (is_sum)
-          result->matrix[i][j] = A->matrix[i][j] + B->matrix[i][j];
-        else
-          result->matrix[i][j] = A->matrix[i][j] - B->matrix[i][j];
+    error = s21_create_matrix(A->rows, A->columns, result);
+    if (!error) {
+      for (int i = 0; i < A->rows; i++) {
+        for (int j = 0; j < A->columns; j++) {
+          if (is_sum)
+            result->matrix[i][j] = A->matrix[i][j] + B->matrix[i][j];
+          else
+            result->matrix[i][j] = A->matrix[i][j] - B->matrix[i][j];
+        }
       }
     }
   }
@@ -93,4 +93,43 @@ int s21_eq_matrix(matrix_t *A, matrix_t *B) {
     compare = FAILURE;
   }
   return compare;
+}
+
+int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
+  int error = 0;
+  if (incorrect_matrix(A)) {
+    error = 1;
+  } else {
+    error = s21_create_matrix(A->rows, A->columns, result);
+    if (!error) {
+      for (int i = 0; i < A->rows; i++) {
+        for (int j = 0; j < A->columns; j++) {
+          result->matrix[i][j] = number * A->matrix[i][j];
+        }
+      }
+    }
+  }
+  return error;
+}
+
+int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
+  int error = 0;
+  if (A->columns != B->rows || A->rows != B->columns) {
+    error = 2;
+  } else if (incorrect_matrix(A) || incorrect_matrix(B)) {
+    error = 1;
+  } else {
+    error = s21_create_matrix(A->rows, B->columns, result);
+    if (!error) {
+      for (int i = 0; i < A->rows; i++) {
+        for (int j = 0; j < B->columns; j++) {
+          result->matrix[i][j] = 0;
+          for (int k = 0; k < A->columns; k++) {
+            result->matrix[i][j] += A->matrix[i][k] * B->matrix[k][j];
+          }
+        }
+      }
+    }
+  }
+  return error;
 }
