@@ -1,5 +1,5 @@
-# FLAGS=-Wall -Werror -Wextra -std=c11
-FLAGS=-Wall -Wextra -std=c11
+FLAGS=-Wall -Werror -Wextra -std=c11
+# FLAGS=-Wall -Wextra -std=c11
 CC=gcc $(FLAGS)
 FILE=s21_matrix
 FILETEST=tests/*
@@ -20,13 +20,13 @@ else
 endif
 
 
-# all: clean $(FILE).a gcov_report
+all: clean $(FILE).a gcov_report
 
 ########################################
-all: temp
+# all: temp
 
-temp:
-	$(CC) -fsanitize=address -g *.c $(TESTFLAGS)
+# temp:
+# 	$(CC) -fsanitize=address -g *.c $(TESTFLAGS)
 ########################################
 
 o_files:
@@ -39,7 +39,7 @@ test: $(FILE).a
 	$(CC) $(FILETEST).c $(FILE).a -o $(FILETESTO) $(TESTFLAGS)
 	./$(FILETESTO)
 
-test_v: $(FILE).a
+test_val: $(FILE).a
 	$(CC) $(FILETEST).c $(FILE).a -o $(FILETESTO) $(TESTFLAGS)
 	valgrind --tool=memcheck --leak-check=yes ./$(FILETESTO)
 

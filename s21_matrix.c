@@ -66,7 +66,7 @@ int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
 
 int incorrect_matrix(matrix_t *A) {
   int res = 0;
-  if (A->columns < 1 || A->rows < 1 || A == NULL || A->matrix == NULL) res = 1;
+  if (A->columns < 1 || A->rows < 1 || !A->matrix) res = 1;
   return res;
 }
 
@@ -75,10 +75,10 @@ int incorrect_matrix(matrix_t *A) {
 // @param B вторая матрица для сравнения
 // @return результат сравнения (0 - не равны, 1 - равны)
 int s21_eq_matrix(matrix_t *A, matrix_t *B) {
-  double check;
   int compare = SUCCESS;
   if (A->columns == B->columns && A->rows == B->rows && !incorrect_matrix(A) &&
       !incorrect_matrix(B)) {
+    double check;
     for (int i = 0; i < A->rows; i++) {
       for (int j = 0; j < A->columns; j++) {
         check = A->matrix[i][j] - B->matrix[i][j];
@@ -164,7 +164,7 @@ double det(matrix_t *A) {
   if (A->rows == 1) {
     result = A->matrix[0][0];
   } else {
-    matrix_t temp;
+    matrix_t temp = {0};
     s21_create_matrix(A->rows - 1, A->columns - 1, &temp);
     for (int j = 0; j < A->columns; j++) {
       minor_matrix(A, 0, j, &temp);
@@ -198,12 +198,18 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
     if (!error) {
       for (int i = 0; i < A->rows; i++) {
         for (int j = 0; j < A->columns; j++) {
-          matrix_t temp;
-          s21_create_matrix(A->rows - 1, A->columns - 1, &temp);
-          minor_matrix(A, i, j, &temp);
-          result->matrix[i][j] = pow(-1, i + j) * det(&temp);
-          s21_remove_matrix(&temp);
+          matrix_t temp = {0};
+          error = s21_create_matrix(A->rows - 1, A->columns - 1, &temp);
+          if (!error) {
+            minor_matrix(A, i, j, &temp);
+            result->matrix[i][j] = pow(-1, i + j) * det(&temp);
+            s21_remove_matrix(&temp);
+          }
         }
+      }
+      if (error) {
+        error = 2;
+        s21_remove_matrix(result);
       }
     }
   }
@@ -219,17 +225,24 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
   } else {
     double determinant = det(A);
     if (determinant) {
-      matrix_t temp_mtx;
-      error = s21_calc_complements(A, &temp_mtx);
-      if (!error) {
-        matrix_t trans_temp_mtx;
-        error = s21_transpose(&temp_mtx, &trans_temp_mtx);
+      if (A->rows == 1) {
+        error = s21_create_matrix(A->rows, A->columns, result);
+        if (!error) result->matrix[0][0] = 1.0 / A->matrix[0][0];
+      } else {
+        matrix_t temp_mtx = {0};
+        error = s21_calc_complements(A, &temp_mtx);
         if (!error) {
-          error = s21_mult_number(&trans_temp_mtx, determinant, &result);
-          s21_remove_matrix(&trans_temp_mtx);
+          matrix_t trans_temp_mtx = {0};
+          error = s21_transpose(&temp_mtx, &trans_temp_mtx);
+          if (!error) {
+            error = s21_mult_number(&trans_temp_mtx, determinant, result);
+            s21_remove_matrix(&trans_temp_mtx);
+          }
+          s21_remove_matrix(&temp_mtx);
         }
-        s21_remove_matrix(&temp_mtx);
       }
+    } else {
+      error = 2;
     }
   }
   return error;
