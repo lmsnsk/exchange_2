@@ -41,7 +41,8 @@ test: $(FILE).a
 
 test_val: $(FILE).a
 	$(CC) $(FILETEST).c $(FILE).a -o $(FILETESTO) $(TESTFLAGS)
-	valgrind --tool=memcheck --leak-check=yes ./$(FILETESTO)
+	valgrind --tool=memcheck --log-file="valgrind_check.log" --leak-check=yes \
+	--track-origins=yes -s ./$(FILETESTO)
 
 gcov_report: $(FILE).a
 	$(CC) $(COVFLAG) $(FILETEST).c *.c -o $(FILEREPORT) $(TESTFLAGS)
@@ -53,7 +54,7 @@ gcov_report: $(FILE).a
 rep: gcov_report
 
 clean:
-	rm -rf *.o *.a *.gcno *.gcda *.info $(DIRREPORT) $(FILETESTO) $(FILEREPORT)
+	rm -rf *.o *.a *.gcno *.gcda *.info *.log $(DIRREPORT) $(FILETESTO) $(FILEREPORT)
 
 #style
 cpp:
