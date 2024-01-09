@@ -1,10 +1,16 @@
 #include "s21_matrix.h"
 
-int s21_create_matrix(int rows, int columns, matrix_t *result) {
-  int error = 0;
+/*Собственная библиотека для обработки числовых матриц*/
 
+/** @brief функция создания матрицы
+ * @param rows количество строк
+ * @param columns количество столбцов
+ * @param result указатель на матрицу
+ * @return результат создания (0 - успешно, 1 - ошибка) */
+int s21_create_matrix(int rows, int columns, matrix_t *result) {
+  int error = OK;
   if (rows < 1 || columns < 1) {
-    error = 1;
+    error = INCORRECT_MATRIX;
   } else {
     result->columns = columns;
     result->rows = rows;
@@ -24,6 +30,8 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
   return error;
 }
 
+/** @brief функция очистки и удаления матрицы
+ * @param A указатель на матрицу */
 void s21_remove_matrix(matrix_t *A) {
   if (A->matrix) {
     for (int i = 0; i < A->rows; i++) {
@@ -36,10 +44,19 @@ void s21_remove_matrix(matrix_t *A) {
   A->matrix = NULL;
 }
 
+/** @brief вспомогательная функция суммирования и вычитания матрицы
+ * @param A первая матрица
+ * @param B вторая матрица
+ * @param result указатель на результирующую матрицу
+ * @param is_sum флаг сумма/разность (1 - суммаб 0 - разность)
+ * @return результат вычисления (0 - успешно, 1 - некорректная матрица, 2 -
+ * ошибка вычисления) */
 int sum_and_sub(matrix_t *A, matrix_t *B, matrix_t *result, int is_sum) {
-  int error = 0;
+  int error = OK;
   if (A->columns != B->columns || A->rows != B->rows) {
-    error = 2;
+    error = CACLULATION_ERROR;
+  } else if (incorrect_matrix(A) || incorrect_matrix(B)) {
+    error = INCORRECT_MATRIX;
   } else {
     error = s21_create_matrix(A->rows, A->columns, result);
     if (!error) {
@@ -56,24 +73,40 @@ int sum_and_sub(matrix_t *A, matrix_t *B, matrix_t *result, int is_sum) {
   return error;
 }
 
+/** @brief функция суммирования матриц
+ * @param A первая матрица
+ * @param B вторая матрица
+ * @param result указатель на результирующую матрицу
+ * @return результат вычисления (0 - успешно, 1 - некорректная матрица, 2 -
+ * ошибка вычисления) */
 int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
   return sum_and_sub(A, B, result, 1);
 }
 
+/** @brief функция вычитания матриц
+ * @param A первая матрица
+ * @param B вторая матрица
+ * @param result указатель на результирующую матрицу
+ * @return результат вычисления (0 - успешно, 1 - некорректная матрица, 2 -
+ * ошибка вычисления) */
 int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
   return sum_and_sub(A, B, result, 0);
 }
 
+/** @brief функция проверки матрицы на корректность
+ * @param A проверяемая матрица
+ * @return результат проверки (0 - матрицца корректна, 1 - некорректная матрица)
+ */
 int incorrect_matrix(matrix_t *A) {
-  int res = 0;
-  if (A->columns < 1 || A->rows < 1 || !A->matrix) res = 1;
+  int res = OK;
+  if (A->columns < 1 || A->rows < 1 || !A->matrix) res = INCORRECT_MATRIX;
   return res;
 }
 
-// @brief функция сравнение матриц
-// @param A первая матрица для сравнения
-// @param B вторая матрица для сравнения
-// @return результат сравнения (0 - не равны, 1 - равны)
+/** @brief функция сравнение матриц
+ * @param A первая матрица для сравнения
+ * @param B вторая матрица для сравнения
+ * @return результат сравнения (0 - не равны, 1 - равны)*/
 int s21_eq_matrix(matrix_t *A, matrix_t *B) {
   int compare = SUCCESS;
   if (A->columns == B->columns && A->rows == B->rows && !incorrect_matrix(A) &&
@@ -95,10 +128,15 @@ int s21_eq_matrix(matrix_t *A, matrix_t *B) {
   return compare;
 }
 
+/** @brief функция умножения матрицы на число
+ * @param A матрица
+ * @param number число
+ * @param result указатель на результирующую матрицу
+ * @return результат вычисления (0 - успешно, 1 - некорректная матрица) */
 int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
-  int error = 0;
+  int error = OK;
   if (incorrect_matrix(A)) {
-    error = 1;
+    error = INCORRECT_MATRIX;
   } else {
     error = s21_create_matrix(A->rows, A->columns, result);
     if (!error) {
@@ -112,12 +150,18 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
   return error;
 }
 
+/** @brief функция произведения матриц
+ * @param A первая матрица
+ * @param B вторая матрица
+ * @param result указатель на результирующую матрицу
+ * @return результат вычисления (0 - успешно, 1 - некорректная матрица, 2 -
+ * ошибка вычисления) */
 int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
-  int error = 0;
+  int error = OK;
   if (A->columns != B->rows || A->rows != B->columns) {
-    error = 2;
+    error = CACLULATION_ERROR;
   } else if (incorrect_matrix(A) || incorrect_matrix(B)) {
-    error = 1;
+    error = INCORRECT_MATRIX;
   } else {
     error = s21_create_matrix(A->rows, B->columns, result);
     if (!error) {
@@ -134,10 +178,14 @@ int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
   return error;
 }
 
+/** @brief функция транспонирования
+ * @param A  матрица
+ * @param result указатель на результирующую матрицу
+ * @return результат вычисления (0 - успешно, 1 - ошибка) */
 int s21_transpose(matrix_t *A, matrix_t *result) {
-  int error = 0;
+  int error = OK;
   if (incorrect_matrix(A)) {
-    error = 1;
+    error = INCORRECT_MATRIX;
   } else {
     error = s21_create_matrix(A->columns, A->rows, result);
     for (int i = 0; i < A->rows; i++) {
@@ -149,6 +197,11 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
   return error;
 }
 
+/** @brief вспомогательная функция для вычисления минора
+ * @param A  матрица
+ * @param row  номер строки
+ * @param col  номер столбца
+ * @param result указатель на результирующую матрицу */
 void minor_matrix(matrix_t *A, int row, int col, matrix_t *result) {
   for (int i = 0; i < result->rows; i++) {
     for (int j = 0; j < result->columns; j++) {
@@ -159,6 +212,9 @@ void minor_matrix(matrix_t *A, int row, int col, matrix_t *result) {
   }
 }
 
+/** @brief вспомогательная функция вычисления определителя
+ * @param A  матрица
+ * @return вычисленный определитель */
 double det(matrix_t *A) {
   double result = 0;
   if (A->rows == 1) {
@@ -175,24 +231,34 @@ double det(matrix_t *A) {
   return result;
 }
 
+/** @brief функция получения определителя матрицы
+ * @param A  матрица
+ * @param result указатель на определитель
+ * @return результат вычисления (0 - успешно, 1 - некорректная матрица, 2 -
+ * ошибка вычисления) */
 int s21_determinant(matrix_t *A, double *result) {
-  int error = 0;
+  int error = OK;
   if (A->columns != A->rows) {
-    error = 2;
+    error = CACLULATION_ERROR;
   } else if (incorrect_matrix(A)) {
-    error = 1;
+    error = INCORRECT_MATRIX;
   } else {
     *result = det(A);
   }
   return error;
 }
 
+/** @brief функция получения матрицы алгебраических дополнений
+ * @param A  матрица
+ * @param result указатель на результирующую матрицу
+ * @return результат вычисления (0 - успешно, 1 - некорректная матрица, 2 -
+ * ошибка вычисления) */
 int s21_calc_complements(matrix_t *A, matrix_t *result) {
-  int error = 0;
+  int error = OK;
   if (A->columns != A->rows) {
-    error = 2;
+    error = CACLULATION_ERROR;
   } else if (incorrect_matrix(A)) {
-    error = 1;
+    error = INCORRECT_MATRIX;
   } else {
     error = s21_create_matrix(A->rows, A->columns, result);
     if (!error) {
@@ -216,12 +282,17 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
   return error;
 }
 
+/** @brief функция обратной матрицы
+ * @param A  матрица
+ * @param result указатель на результирующую матрицу
+ * @return результат вычисления (0 - успешно, 1 - некорректная матрица, 2 -
+ * ошибка вычисления) */
 int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
-  int error = 0;
+  int error = OK;
   if (A->columns != A->rows) {
-    error = 2;
+    error = CACLULATION_ERROR;
   } else if (incorrect_matrix(A)) {
-    error = 1;
+    error = INCORRECT_MATRIX;
   } else {
     double determinant = det(A);
     if (determinant) {

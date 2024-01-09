@@ -7,6 +7,9 @@
 
 #define SUCCESS 1
 #define FAILURE 0
+#define OK 0
+#define INCORRECT_MATRIX 1
+#define CACLULATION_ERROR 2
 #define ACCURACY 1.0E-07
 
 typedef struct matrix_struct {
