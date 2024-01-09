@@ -205,8 +205,8 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
 void minor_matrix(matrix_t *A, int row, int col, matrix_t *result) {
   for (int i = 0; i < result->rows; i++) {
     for (int j = 0; j < result->columns; j++) {
-      int k = i >= row ? i + 1 : i;
-      int l = j >= col ? j + 1 : j;
+      int k = (i >= row) ? i + 1 : i;
+      int l = (j >= col) ? j + 1 : j;
       result->matrix[i][j] = A->matrix[k][l];
     }
   }
