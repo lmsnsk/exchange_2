@@ -313,7 +313,7 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
         }
       }
     } else {
-      error = 2;
+      error = CACLULATION_ERROR;
     }
   }
   return error;
