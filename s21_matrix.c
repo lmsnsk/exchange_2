@@ -45,12 +45,12 @@ void s21_remove_matrix(matrix_t *A) {
 }
 
 /** @brief вспомогательная функция суммирования и вычитания матрицы
- * @param A первая матрица
- * @param B вторая матрица
- * @param result указатель на результирующую матрицу
- * @param is_sum флаг сумма/разность (1 - суммаб 0 - разность)
- * @return результат вычисления (0 - успешно, 1 - некорректная матрица, 2 -
- * ошибка вычисления) */
+ *  @param A первая матрица
+ *  @param B вторая матрица
+ *  @param result указатель на результирующую матрицу
+ *  @param is_sum флаг сумма/разность (1 - суммаб 0 - разность)
+ *  @return результат вычисления (0 - успешно, 1 - некорректная матрица, 2 -
+ *  ошибка вычисления) */
 int sum_and_sub(matrix_t *A, matrix_t *B, matrix_t *result, int is_sum) {
   int error = OK;
   if (A->columns != B->columns || A->rows != B->rows) {
@@ -274,7 +274,7 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
         }
       }
       if (error) {
-        error = 2;
+        error = CACLULATION_ERROR;
         s21_remove_matrix(result);
       }
     }
